@@ -13,6 +13,9 @@ from sklearn.compose import ColumnTransformer
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import joblib
 import os
+import requests
+import gdown
+from io import StringIO
 
 # Set up page config
 st.set_page_config(page_title="Vehicle Price Predictor", 
@@ -48,25 +51,60 @@ app_mode = st.sidebar.radio("Choose a section",
                            ["Data Exploration", "Model Info", "Make Prediction"])
 
 # Load data (cached to improve performance)
-@st.cache_data
+@st.cache_data(ttl=3600)
 def load_data():
-    data = pd.read_csv('vehicles.csv', on_bad_lines='skip', engine='python')
-    
-    # Clean data (same as your original cleaning)
-    data = data[(data['price'] > 500) & (data['price'] < 100000)]
-    data['odometer'] = data['odometer'] / 1000
-    data['posting_date'] = pd.to_datetime(data['posting_date'], utc=True)
-    data['posting_year'] = data['posting_date'].dt.year
-    current_year = pd.Timestamp.now().year
-    data['age'] = current_year - data['year']
-    data = data.dropna(subset=['price'])
-    cols_to_drop = ['id', 'url', 'region_url', 'image_url', 'description', 'posting_date', 'county']
-    data = data.drop(columns=cols_to_drop, errors='ignore')
-    
-    return data
+    try:
+        # Download the CSV from Google Drive
+        file_id = "1xPOSLvTlZ-aI54s6D5wxAEa0UB56RzBL"
+        gdown.download(f"https://drive.google.com/uc?id={file_id}", "vehicles.csv", quiet=False)
 
-data = load_data()
+        # Read the CSV file
+        data = pd.read_csv("vehicles.csv", on_bad_lines='skip', engine='python')
 
+        # Basic data cleaning
+        data = data[(data['price'] > 500) & (data['price'] < 100000)]
+        data['odometer'] = data['odometer'] / 1000
+        data['posting_date'] = pd.to_datetime(data['posting_date'], utc=True, errors='coerce')
+        data['posting_year'] = data['posting_date'].dt.year
+        current_year = pd.Timestamp.now().year
+        data['age'] = current_year - data['year']
+        data = data.dropna(subset=['price'])
+
+        cols_to_drop = ['id', 'url', 'region_url', 'image_url', 
+                        'description', 'posting_date', 'county']
+        data = data.drop(columns=cols_to_drop, errors='ignore')
+
+        st.session_state.data_source = "Google Drive"
+        return data
+
+    except Exception as e:
+        st.error(f"❗ Failed to load dataset: {str(e)}")
+        # Return sample fallback data
+        return pd.DataFrame({
+            'price': [15000, 20000, 18000],
+            'year': [2018, 2019, 2017],
+            'manufacturer': ['toyota', 'honda', 'ford'],
+            'odometer': [45.0, 30.0, 60.0],
+            'condition': ['good', 'excellent', 'fair'],
+            'age': [5, 4, 6],
+            'posting_year': [2023, 2023, 2023]
+        })
+
+
+# Initialize data
+if 'data' not in st.session_state:
+    st.session_state.data = load_data()
+    st.session_state.data_loaded = st.session_state.data is not None
+
+if not st.session_state.get('data_loaded', False):
+    st.error("❗ Dataset not loaded. Please check the data file.")
+    st.stop()
+
+# Display which data source was used
+if 'data_source' in st.session_state:
+    st.sidebar.markdown(f"**Data source:** `{st.session_state.data_source}`")
+else:
+    st.sidebar.warning("Using sample data")
 # Load or train model (cached)
 @st.cache_resource
 def load_model():
