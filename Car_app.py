@@ -70,10 +70,10 @@ def load_data_sample():
         progress_bar.progress(40)
         
         # Read only a sample of the data for faster processing
-        # First, get the total number of rows
+      
         total_rows = sum(1 for _ in open("vehicles.csv")) - 1  # Subtract header
         
-        # Calculate sample size (use 20% or max 150k rows for better performance)
+        # Calculate sample size 
         sample_size = min(150000, max(25000, total_rows // 5))
         
         status_text.text(f'Loading {sample_size:,} rows from {total_rows:,} total rows...')
@@ -138,7 +138,7 @@ def load_data_sample():
         progress_bar.empty()
         status_text.empty()
         
-        # Clean up the downloaded file to save space
+        # Clean up the downloaded file 
         if os.path.exists("vehicles.csv"):
             os.remove("vehicles.csv")
         
@@ -154,7 +154,7 @@ def load_data_sample():
 
     except Exception as e:
         st.error(f" Failed to load dataset: {str(e)}")
-        # Return sample fallback data
+        
         return create_sample_data()
 
 def create_sample_data():
@@ -209,7 +209,7 @@ if 'data_source' in st.session_state:
             st.write(f"**Sample size:** {info['sample_size']:,} rows")
             st.write(f"**Sample ratio:** {info['reduction_ratio']:.1%}")
 
-# Load or train model (cached and optimized)
+# Load or train model 
 @st.cache_resource
 def load_model():
     """Load or train the prediction model"""
@@ -260,7 +260,7 @@ def load_model():
             preprocessor,
             RandomForestRegressor(
                 n_estimators=100,  # Increased back for better accuracy
-                max_depth=15,      # Increased for better performance with more data
+                max_depth=15,      # Increased for better performance 
                 min_samples_leaf=5, # Reduced for better fitting
                 random_state=42,
                 n_jobs=-1
@@ -420,7 +420,7 @@ elif app_mode == "Model Info":
 else:
     st.header("Make a Price Prediction")
     
-    # Get available options from data
+    
     manufacturers = ['Unknown'] + sorted([x for x in data['manufacturer'].unique() if pd.notna(x)])
     conditions = ['Unknown'] + sorted([x for x in data['condition'].unique() if pd.notna(x) and 'condition' in data.columns])
     
@@ -511,7 +511,7 @@ else:
             st.info(f"📊 **Estimated price range:** ${prediction*0.85:.0f} - ${prediction*1.15:.0f}")
             
             # Additional insights
-            st.markdown("### 📈 Price Insights")
+            st.markdown("###  Price Insights")
             
             # Compare to similar vehicles
             similar_vehicles = data[
