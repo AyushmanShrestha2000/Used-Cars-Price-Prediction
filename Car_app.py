@@ -183,7 +183,7 @@ def create_sample_data():
     data['age'] = 2024 - data['year']
     data['posting_year'] = 2023
     
-    st.session_state.data_source = "Sample Data (Demo - 5K records)"
+    #st.session_state.data_source = "Sample Data (Demo - 5K records)"
     return data
 
 # Initialize data with loading indicator
