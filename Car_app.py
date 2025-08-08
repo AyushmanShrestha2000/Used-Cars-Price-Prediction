@@ -19,7 +19,7 @@ from io import StringIO
 
 # Set up page config
 st.set_page_config(page_title="Vehicle Price Predictor", 
-                   page_icon="🚗", 
+                   page_icon="", 
                    layout="wide")
 
 # Custom CSS
@@ -39,7 +39,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # Title and description
-st.title("🚗 Vehicle Price Prediction")
+st.title(" Vehicle Price Prediction")
 st.markdown("""
 This app predicts used vehicle prices based on their features. 
 The model was trained on a sample of vehicle listings for optimal performance.
@@ -153,7 +153,7 @@ def load_data_sample():
         return data
 
     except Exception as e:
-        st.error(f"❗ Failed to load dataset: {str(e)}")
+        st.error(f" Failed to load dataset: {str(e)}")
         # Return sample fallback data
         return create_sample_data()
 
@@ -505,7 +505,7 @@ else:
             prediction = model.predict(input_data)[0]
             
             # Display result with styling
-            st.success(f"## 💰 Predicted Price: ${prediction:,.0f}")
+            st.success(f"##  Predicted Price: ${prediction:,.0f}")
             
             # Show confidence interval
             st.info(f"📊 **Estimated price range:** ${prediction*0.85:.0f} - ${prediction*1.15:.0f}")
@@ -530,7 +530,7 @@ else:
                     st.info(f"This prediction aligns with similar vehicles (avg: ${avg_similar:,.0f})")
             
         except Exception as e:
-            st.error(f"❌ Error making prediction: {str(e)}")
+            st.error(f" Error making prediction: {str(e)}")
             st.error("Please check your inputs and try again.")
             
             # Debug information
