@@ -45,4 +45,4 @@ project/
 ├── README.md             # This file
 └── requirements.txt      # Dependencies
 
-[Kaggle Used Cars Dataset](https://www.kaggle.com/datasets/austinreese/craigslist-carstrucks-data/data)
+Data source: [Kaggle Used Cars Dataset](https://www.kaggle.com/datasets/austinreese/craigslist-carstrucks-data/data)
