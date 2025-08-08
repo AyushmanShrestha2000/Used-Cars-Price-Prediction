@@ -1,27 +1,46 @@
-##Clone the repository:
-git clone https://github.com/yourusername/vehicle-price-prediction.git
-cd vehicle-price-prediction
+# Craigslist Used Vehicle Price Prediction
 
-##Create and activate virtual environment:
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+## Project Overview
+This tool helps users estimate fair prices for used vehicles listed on Craigslist. Using machine learning, it analyzes key factors like mileage, age, and manufacturer to predict prices. The Random Forest model provides the most accurate estimates with 75% accuracy.
 
-##Install dependencies:
-pip install -r requirements.txt
+## Features
+- Cleaned and processed 5,670 vehicle listings
+- Visualizations of price distributions and key factors
+- Compared multiple ML models (Linear Regression, Random Forest)
+- Interactive price prediction with confidence intervals
+- Comparison with similar vehicles
 
-##Download the dataset:
-Place vehicles.csv in the project root
+## How It Works
+1. Input vehicle details (make, year, mileage, etc.)
+2. System processes the data using our trained model
+3. Returns price estimate with confidence range
+4. Shows comparison with similar vehicles
 
-##Start Jupyter:
-jupyter notebook
+## Technologies Used:
+- **Frontend**: Streamlit
+- **Backend**: Python
+- **Machine Learning**:
+  - Scikit-learn
+  - Random Forest
+- **Data Visualization**:
+  - Matplotlib
+  - Seaborn
+- **Data Processing**: Pandas, NumPy
 
-##Running the Web App:
-streamlit run app.py
+## Install dependencies:
+- pip install -r requirements.txt
 
-##File Structure:
-vehicle-price-prediction/
-├── app.py                 # Streamlit application
-├── craigslist_vehicles.ipynb  # Jupyter notebook analysis
-├── vehicles.csv               # Dataset
-├── README.md                  # This file
-├── requirements.txt           # Python dependencies
+## Run the application:
+- streamlit run app.py
+
+## Installation
+1. Clone repo:
+```bash
+git clone https://github.com/AyushmanShrestha2000/Used-Cars-Price-Prediction
+cd craigslist-vehicle-prediction
+
+project/
+├── app.py                # Main application
+├── vehicles.csv          # Dataset
+├── README.md             # This file
+└── requirements.txt      # Dependencies
