@@ -73,8 +73,8 @@ def load_data_sample():
         # First, get the total number of rows
         total_rows = sum(1 for _ in open("vehicles.csv")) - 1  # Subtract header
         
-        # Calculate sample size (use 10% or max 50k rows for better performance)
-        sample_size = min(50000, max(10000, total_rows // 10))
+        # Calculate sample size (use 20% or max 150k rows for better performance)
+        sample_size = min(150000, max(25000, total_rows // 5))
         
         status_text.text(f'Loading {sample_size:,} rows from {total_rows:,} total rows...')
         progress_bar.progress(60)
@@ -127,7 +127,8 @@ def load_data_sample():
         categorical_cols = data.select_dtypes(include=['object']).columns
         for col in categorical_cols:
             if col != 'price':
-                top_categories = data[col].value_counts().head(20).index
+                # Increase top categories for larger dataset
+                top_categories = data[col].value_counts().head(50).index
                 data[col] = data[col].where(data[col].isin(top_categories), 'other')
         
         status_text.text('Data loaded successfully!')
@@ -159,12 +160,13 @@ def load_data_sample():
 def create_sample_data():
     """Create sample data if real data fails to load"""
     np.random.seed(42)
-    n_samples = 1000
+    n_samples = 5000  # Increased sample size
     
-    manufacturers = ['toyota', 'ford', 'chevrolet', 'honda', 'nissan', 'hyundai', 'volkswagen']
-    conditions = ['excellent', 'good', 'fair', 'like new']
+    manufacturers = ['toyota', 'ford', 'chevrolet', 'honda', 'nissan', 'hyundai', 'volkswagen', 'bmw', 'mercedes-benz', 'audi']
+    conditions = ['excellent', 'good', 'fair', 'like new', 'salvage']
     fuel_types = ['gas', 'diesel', 'hybrid', 'electric']
     transmissions = ['automatic', 'manual']
+    vehicle_types = ['sedan', 'SUV', 'truck', 'coupe', 'hatchback', 'convertible']
     
     data = pd.DataFrame({
         'price': np.random.normal(20000, 8000, n_samples).clip(5000, 50000),
@@ -174,13 +176,14 @@ def create_sample_data():
         'condition': np.random.choice(conditions, n_samples),
         'fuel': np.random.choice(fuel_types, n_samples),
         'transmission': np.random.choice(transmissions, n_samples),
+        'type': np.random.choice(vehicle_types, n_samples),
         'age': 0
     })
     
     data['age'] = 2024 - data['year']
     data['posting_year'] = 2023
     
-    st.session_state.data_source = "Sample Data (Demo)"
+    st.session_state.data_source = "Sample Data (Demo - 5K records)"
     return data
 
 # Initialize data with loading indicator
@@ -256,9 +259,9 @@ def load_model():
         rf_pipeline = make_pipeline(
             preprocessor,
             RandomForestRegressor(
-                n_estimators=50,  # Reduced for faster training
-                max_depth=10,     # Reduced to prevent overfitting
-                min_samples_leaf=10,
+                n_estimators=100,  # Increased back for better accuracy
+                max_depth=15,      # Increased for better performance with more data
+                min_samples_leaf=5, # Reduced for better fitting
                 random_state=42,
                 n_jobs=-1
             )
@@ -376,10 +379,11 @@ elif app_mode == "Model Info":
     
     st.subheader("Random Forest Regressor")
     st.markdown("""
-    - **Algorithm**: Random Forest (Optimized for performance)
-    - **Estimators**: 50 trees
-    - **Max Depth**: 10
-    - **Min Samples Leaf**: 10
+    - **Algorithm**: Random Forest (Optimized for larger dataset)
+    - **Estimators**: 100 trees
+    - **Max Depth**: 15
+    - **Min Samples Leaf**: 5
+    - **Sample Size**: Up to 150,000 vehicles (20% of full dataset)
     - **Features**: Automatically selected based on data availability
     """)
     
